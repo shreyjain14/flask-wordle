@@ -1,0 +1,29 @@
+body {
+    background-color: #3f3f3f;
+    color: white;
+}
+
+.letter {
+    color: black;
+    width: 42px;
+    height: 42px;
+    display: table-cell;
+    text-align: center;
+    margin: 10px;
+}
+
+.white {
+    background-color: white;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+#word {
+    visibility: hidden;
+}

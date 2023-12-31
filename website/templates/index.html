@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <link rel="stylesheet" href="{{  url_for('static', filename='css/style.css')  }}">
+
+    <title>
+      Wordle
+    </title>
+
+  </head>
+  <body>
+
+  <p id="word"></p>
+
+    <div class="container">
+
+        <h1 class="d-flex justify-content-center">Wordle</h1>
+
+        <div id="scroller">
+
+            <template id="post_template">
+
+                <div class="d-flex justify-content-center">
+
+                    <div class="d-flex flex-row">
+
+                        <div id="A" class="p-2 letter white"></div>
+                        <div id="B" class="p-2 letter white"></div>
+                        <div id="C" class="p-2 letter white"></div>
+                        <div id="D" class="p-2 letter white"></div>
+                        <div id="E" class="p-2 letter white"></div>
+
+                    </div>
+
+                </div>
+
+            </template>
+
+        </div>
+
+        <div class="answer d-flex justify-content-center">
+
+
+            <input type="text" id="answer" maxlength="5" minlength="5">
+
+            <button onclick="loadItems()">Submit</button>
+
+            <div id="alert"></div>
+
+
+        </div>
+
+    </div>
+
+    <script>
+        var scroller = document.querySelector("#scroller");
+        var alert = document.querySelector("#alert");
+        var template = document.querySelector("#post_template");
+
+        loadWord();
+
+        async function getWord() {
+            let response = await fetch(`/word`);
+            let data = await response.json();
+            return data;
+        }
+
+        async function loadWord() {
+            let word = await getWord();
+            document.querySelector("#word").innerHTML = word;
+        }
+
+        function loadItems() {
+
+            var answer = document.querySelector("#answer").value;
+            var word = document.querySelector("#word").innerHTML;
+
+            fetch(`/load?w=${word}&n=${answer}`).then((response) => {
+
+                response.json().then((data) => {
+
+                    if (!data.length) {
+                        alert.innerHTML = 'Please Enter 5 letters';
+                    }
+
+                    const template_clone = template.content.cloneNode(true);
+
+                    template_clone.querySelector("#A").innerHTML = data[0][0];
+                    template_clone.querySelector("#B").innerHTML = data[0][1];
+                    template_clone.querySelector("#C").innerHTML = data[0][2];
+                    template_clone.querySelector("#D").innerHTML = data[0][3];
+                    template_clone.querySelector("#E").innerHTML = data[0][4];
+
+
+                    template_clone.querySelector("#A").className = `p-2 letter ${data[1][0]}`;
+                    template_clone.querySelector("#B").className = `p-2 letter ${data[1][1]}`;
+                    template_clone.querySelector("#C").className = `p-2 letter ${data[1][2]}`;
+                    template_clone.querySelector("#D").className = `p-2 letter ${data[1][3]}`;
+                    template_clone.querySelector("#E").className = `p-2 letter ${data[1][4]}`;
+
+                    scroller.appendChild(template_clone);
+
+
+                })
+
+            })
+
+        }
+    </script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+  </body>
+</html>
